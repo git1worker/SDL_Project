@@ -33,7 +33,7 @@ private:
     bool mouseButtonDown = false;
     int getX;
     int getY;
-    int sizeRect = 20;
+    int sizeCell = 30;
     int screenWidth;
     int screenHeight;
     int counterCallsRandom = 0;
@@ -43,12 +43,24 @@ private:
 
     SDL_Renderer* renderer = nullptr;
     SDL_Window* window = nullptr;
-    SDL_Rect* rect = new SDL_Rect{ 0, 0, sizeRect, sizeRect };
+    SDL_Rect* rect = new SDL_Rect{ 0, 0, sizeCell, sizeCell };
     SDL_DisplayMode DM;
 
     unsigned long int randInt;
     unsigned long int millisec_since_epoch;
 
     void SetRandom();
+
+    void KeySpace();
+
+    void KeyEscape();
+
+    void KeyE();
+
+    void KeyR();
+
+    void MouseDownLeft();
+
+    void FillGrid();
 
 };

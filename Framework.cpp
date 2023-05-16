@@ -1,6 +1,9 @@
 
 #include "Framework.h"
 
+/// <summary>
+/// -----------------------PUBLIC-----------------------
+/// </summary>
 
 bool Framework::Init() {
 
@@ -40,10 +43,7 @@ bool Framework::Init() {
     else
         cout << "Renderer creation completed succesfully" << endl;
 
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderPresent(renderer);
+    FillGrid();
 
 
     return true;
@@ -53,90 +53,31 @@ bool Framework::GetQuit() {
     return quit;
 }
 
-void Framework::SetRandom() {
-    millisec_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-    std::srand(millisec_since_epoch + counterCallsRandom);
-
-    randInt = millisec_since_epoch * std::rand();
-    randInt = randInt / (std::rand() + 1);
-    randInt = randInt * std::rand();
-
-
-    std::srand(randInt);
-    ++counterCallsRandom;
-}
-
 void Framework::CheckEvents() {
     while (SDL_PollEvent(event1)) {
 
         if (event1->type == SDL_MOUSEBUTTONDOWN)
-        {
-            SDL_GetMouseState(&getX, &getY);
-            rect->x = getX;
-            rect->y = getY;
+        {   
 
-            SetRandom();
-
-            SDL_SetRenderDrawColor(renderer, std::rand() % 256, std::rand() % 256, std::rand() % 256, 255);
-            SDL_RenderFillRect(renderer, rect);
-            SDL_RenderPresent(renderer);
-            
+            if (event1->button.button == SDL_BUTTON_LEFT)
+                MouseDownLeft();
 
         }
 
         if (event1->type == SDL_KEYDOWN) {
 
             if (event1->key.keysym.scancode == SDL_SCANCODE_SPACE)
-            {
-                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+                KeySpace();
 
-                SDL_RenderClear(renderer);
-                SDL_RenderPresent(renderer);
-                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-            }
+            else if (event1->key.keysym.scancode == SDL_SCANCODE_R)
+                KeyR();
 
-            else if (event1->key.keysym.scancode == SDL_SCANCODE_R) {
-                for (int h = 0; h < screenHeight; h += sizeRect) {
-                    cout << h << endl;
-                    for (int w = 0; w < screenWidth; w += sizeRect) {
+            else if (event1->key.keysym.scancode == SDL_SCANCODE_E)
+                KeyE();
 
-                        SetRandom();
-
-                        SDL_SetRenderDrawColor(renderer, std::rand() % 256, std::rand() % 256, std::rand() % 256, 255);
-
-                        rect->x = w;
-                        rect->y = h;
-
-                        SDL_RenderFillRect(renderer, rect);
-
-
-                    }
-                }
-                SDL_RenderPresent(renderer);
-            }
-
-            else if (event1->key.keysym.scancode == SDL_SCANCODE_E) {
-                for (int h = 0; h < screenHeight; h += sizeRect) {
-                    cout << h << endl;
-                    for (int w = 0; w < screenWidth; w += sizeRect) {
-
-                        SetRandom();
-
-                        SDL_SetRenderDrawColor(renderer, std::rand() % 256, std::rand() % 256, std::rand() % 256, 255);
-
-                        rect->x = w;
-                        rect->y = h;
-
-                        SDL_RenderFillRect(renderer, rect);
-                        SDL_Delay(5);
-                        SDL_RenderPresent(renderer);
-
-                    }
-                }
-               
-            }
             else if (event1->key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-                quit = true;
+                KeyEscape();
+
         }
 
         if (event1->type == SDL_QUIT)
@@ -159,4 +100,119 @@ void Framework::CleanRes() {
     SDL_DestroyWindow(window);
     SDL_Quit();
 
+}
+
+/// <summary>
+/// -----------------------PRIVATE-----------------------
+/// </summary>
+
+void Framework::SetRandom() {
+    millisec_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    std::srand(millisec_since_epoch + counterCallsRandom);
+
+    randInt = millisec_since_epoch * std::rand();
+    randInt = randInt / (std::rand() + 1);
+    randInt = randInt * std::rand();
+
+
+    std::srand(randInt);
+    ++counterCallsRandom;
+}
+
+void Framework::KeySpace() {
+    FillGrid();
+}
+
+void Framework::KeyEscape() {
+    quit = true;
+}
+
+void Framework::KeyR() {
+
+    for (int h = 0; h < screenHeight; h += sizeCell) {
+        cout << h << endl;
+        for (int w = 0; w < screenWidth; w += sizeCell) {
+
+            SetRandom();
+
+            SDL_SetRenderDrawColor(renderer, std::rand() % 256, std::rand() % 256, std::rand() % 256, 255);
+
+            rect->x = w;
+            rect->y = h;
+
+            SDL_RenderFillRect(renderer, rect);
+
+        }
+    }
+    SDL_RenderPresent(renderer);
+}
+
+void Framework::MouseDownLeft()
+{
+    SDL_GetMouseState(&getX, &getY);
+
+    int quotionerX{ getX / sizeCell };
+    int quotionerY{ getY / sizeCell };
+
+
+
+    rect->y = quotionerY * sizeCell;
+    rect->x = quotionerX * sizeCell;
+    
+    SetRandom();
+
+    SDL_SetRenderDrawColor(renderer, std::rand() % 256, std::rand() % 256, std::rand() % 256, 255);
+
+    SDL_RenderFillRect(renderer, rect);
+    SDL_RenderPresent(renderer);
+}
+
+void Framework::KeyE() {
+    bool exitFor = false;
+    for (int h = 0; h < screenHeight; h += sizeCell) {
+        cout << h << endl;
+        for (int w = 0; w < screenWidth; w += sizeCell) {
+
+            SetRandom();
+
+            SDL_SetRenderDrawColor(renderer, std::rand() % 256, std::rand() % 256, std::rand() % 256, 255);
+
+            rect->x = w;
+            rect->y = h;
+
+            SDL_RenderFillRect(renderer, rect);
+            SDL_Delay(5);
+            
+            SDL_RenderPresent(renderer);
+            SDL_PollEvent(event1);
+            if (event1->key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
+                KeyEscape();
+                exitFor = true;
+                break;
+            }
+            else if (event1->key.keysym.scancode == SDL_SCANCODE_SPACE) {
+                KeySpace();
+                exitFor = true;
+                break;
+            }
+                
+        }
+        if (exitFor)
+            break;
+    }
+}
+
+void Framework::FillGrid() {
+
+    SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
+    SDL_RenderClear(renderer);
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    
+    for (int h = 0; h < screenHeight; h += sizeCell)
+        SDL_RenderDrawLine(renderer, 0, h, screenWidth, h);
+    for (int w = 0; w < screenWidth; w += sizeCell) 
+        SDL_RenderDrawLine(renderer, w, 0, w, screenHeight);
+
+    SDL_RenderPresent(renderer);
 }
