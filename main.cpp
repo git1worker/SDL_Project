@@ -1,5 +1,5 @@
 ﻿
-#include <SDL.h>
+#include "inclSDL.h"
 #include "Framework.h"
 
 Framework* MainApplicationSDL = nullptr;

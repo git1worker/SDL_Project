@@ -1,6 +1,6 @@
 
 #pragma once
-#include <SDL.h>
+#include "inclSDL.h"
 #include <iostream>
 #include <chrono>
 #include <thread>
