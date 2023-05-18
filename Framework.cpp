@@ -18,7 +18,7 @@ bool Framework::Init() {
 
     SDL_GetCurrentDisplayMode(0, &DM);
     screenWidth = DM.w;
-    screenHeight = DM.h;
+    screenHeight = DM.h - 50;
 
     window = SDL_CreateWindow(
         "SDL Window",
@@ -45,7 +45,7 @@ bool Framework::Init() {
 
     FillGrid();
 
-
+    cout << sizeof(*event1);
     return true;
 }
 
@@ -168,7 +168,7 @@ void Framework::MouseDownLeft()
 }
 
 void Framework::KeyE() {
-    bool exitFor = false;
+    
     for (int h = 0; h < screenHeight; h += sizeCell) {
         cout << h << endl;
         for (int w = 0; w < screenWidth; w += sizeCell) {
@@ -187,18 +187,15 @@ void Framework::KeyE() {
             SDL_PollEvent(event1);
             if (event1->key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
                 KeyEscape();
-                exitFor = true;
-                break;
+                return;
             }
             else if (event1->key.keysym.scancode == SDL_SCANCODE_SPACE) {
                 KeySpace();
-                exitFor = true;
-                break;
+                return;
             }
                 
         }
-        if (exitFor)
-            break;
+        
     }
 }
 

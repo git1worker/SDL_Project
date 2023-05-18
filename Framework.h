@@ -33,12 +33,13 @@ private:
     bool mouseButtonDown = false;
     int getX;
     int getY;
-    int sizeCell = 30;
+    int sizeCell = 10;
     int screenWidth;
     int screenHeight;
     int counterCallsRandom = 0;
 
     SDL_Event* event1 = new SDL_Event();
+
     bool quit = false;
 
     SDL_Renderer* renderer = nullptr;
