@@ -40,11 +40,10 @@ bool SortArray::Init(const char* title) {
     else
         cout << "Renderer creation completed succesfully" << endl;
     
-    /*FillRect(0, 100, 2, screenHeight - 100 - 100);
-    FillRect(screenWidth - 2, 100, 2, screenHeight - 100 - 100);*/
+    
 
 
-    sizeArray = 300;
+    sizeArray = 600;
     widthRow = 3 * scale;
 
     KeyN();
@@ -61,7 +60,9 @@ void SortArray::ClearScreen() {
 
     FillRect(0, 100, screenWidth, 2);
     FillRect(0, (screenHeight - 100), screenWidth, 2);
-    FillRect(0, (screenHeight / 2), screenWidth, 2);
+    //FillRect(0, (screenHeight / 2), screenWidth, 2);
+    FillRect(0, 100, 2, screenHeight - 100 - 100);
+    FillRect(screenWidth - 2, 100, 2, screenHeight - 100 - 100);
     
     SDL_SetRenderDrawColor(renderer, 22, 130, 0, 255);
 }
@@ -70,10 +71,10 @@ void SortArray::PrintArray() {
 
     
 
-    int DistBetween = round(((screenWidth - widthRow * sizeArray) / (sizeArray + 1)) * scale);
+    int DistBetween = 1;
 
-    int voidDist = round((screenWidth - (widthRow * sizeArray + DistBetween * sizeArray)) * scale);
-    
+    int voidDist = round((screenWidth - (widthRow * sizeArray + DistBetween * sizeArray)));
+    if (voidDist == 0) DistBetween = 0;
     int x = round(voidDist / 2);
 
     for (int i{ 0 }; i < sizeArray; ++i) {
@@ -224,10 +225,10 @@ void SortArray::SetRandom() {
 
 void SortArray::FillRect(int x, int y, int w, int h) {
     SDL_Rect line;
-    line.x = round(x * scale) + xMovement;
-    line.y = round(y * scale) + yMovement;
-    line.w = round(w * scale);
-    line.h = round(h * scale);
+    line.x = ceil(x * scale) + xMovement;
+    line.y = ceil(y * scale) + yMovement;
+    line.w = ceil(w * scale);
+    line.h = ceil(h * scale);
     SDL_RenderFillRect(renderer, &line);
 }
 
@@ -359,11 +360,22 @@ void SortArray::KeyS() {
 }
 
 void SortArray::KeyEquals() {
-    scale += 0.01;
+    int ratio = 1;
+    if (scale > 4) ratio = 35;
+    else if (scale > 2) ratio = 15;
+    else if (scale > 1.3) ratio = 5;
+    else if (scale > 1) ratio = 2;
+    scale += 0.01 * ratio;
     KeySpace();
 }
 
 void SortArray::KeyMinus() {
-    scale -= 0.01;
+    int ratio = 1;
+    if (scale > 4) ratio = 35;
+    else if (scale > 2) ratio = 15;
+    else if (scale > 1.3) ratio = 5;
+    else if (scale > 1) ratio = 2;
+        
+    scale -= 0.01 * ratio;
     KeySpace();
 }
