@@ -14,7 +14,7 @@ bool SortArray::Init(const char* title) {
 
     SDL_GetCurrentDisplayMode(0, &DM);
     screenWidth = DM.w;
-    screenHeight = DM.h - 60;
+    screenHeight = (DM.h - 60);
 
     window = SDL_CreateWindow(
         title,
@@ -43,8 +43,9 @@ bool SortArray::Init(const char* title) {
     /*FillRect(0, 100, 2, screenHeight - 100 - 100);
     FillRect(screenWidth - 2, 100, 2, screenHeight - 100 - 100);*/
 
+
     sizeArray = 300;
-    widthRow = 3;
+    widthRow = 3 * scale;
 
     KeyN();
 
@@ -59,8 +60,9 @@ void SortArray::ClearScreen() {
 
 
     FillRect(0, 100, screenWidth, 2);
-    FillRect(0, screenHeight - 100, screenWidth, 2);
-    FillRect(0, screenHeight / 2, screenWidth, 2);
+    FillRect(0, (screenHeight - 100), screenWidth, 2);
+    FillRect(0, (screenHeight / 2), screenWidth, 2);
+    
     SDL_SetRenderDrawColor(renderer, 22, 130, 0, 255);
 }
 
@@ -68,11 +70,11 @@ void SortArray::PrintArray() {
 
     
 
-    int DistBetween = (screenWidth - widthRow * sizeArray) / (sizeArray + 1);
+    int DistBetween = round(((screenWidth - widthRow * sizeArray) / (sizeArray + 1)) * scale);
 
-    int voidDist = screenWidth - (widthRow * sizeArray + DistBetween * sizeArray);
+    int voidDist = round((screenWidth - (widthRow * sizeArray + DistBetween * sizeArray)) * scale);
     
-    int x = voidDist / 2;
+    int x = round(voidDist / 2);
 
     for (int i{ 0 }; i < sizeArray; ++i) {
         x += DistBetween;
@@ -90,7 +92,7 @@ void SortArray::GeneratingArray() {
     arr = new int[sizeArray];
     SetRandom();
     for (int i{ 0 }; i < this->sizeArray; ++i) {
-        this->arr[i] = std::rand() % (screenHeight - 100 - 100) + 1;
+        this->arr[i] = (std::rand() % (screenHeight - 100 - 100) + 1) * scale;
     }
     
 }
@@ -150,7 +152,6 @@ void SortArray::Quicksort(int* a, int start, int end)
     // повторяем подмассив, содержащий элементы, превышающие точку опоры
     Quicksort(a, pivot + 1, end);
 }
-
 
 void SortArray::VizualizationSortingArray(const char* method) {
     if (method == "bubble") {
@@ -223,10 +224,10 @@ void SortArray::SetRandom() {
 
 void SortArray::FillRect(int x, int y, int w, int h) {
     SDL_Rect line;
-    line.x = x;
-    line.y = y;
-    line.w = w;
-    line.h = h;
+    line.x = round(x * scale) + xMovement;
+    line.y = round(y * scale) + yMovement;
+    line.w = round(w * scale);
+    line.h = round(h * scale);
     SDL_RenderFillRect(renderer, &line);
 }
 
@@ -239,11 +240,41 @@ void SortArray::CheckEvents() {
 
         if (event1->type == SDL_MOUSEBUTTONDOWN)
         {
-
+            if (event1->button.button == SDL_BUTTON_LEFT) {
+                lButtonIsDown = true;
+            }
 
         }
 
-        if (event1->type == SDL_KEYDOWN) {
+        else if (event1->type == SDL_MOUSEBUTTONUP) {
+            if (event1->button.button == SDL_BUTTON_LEFT && lButtonIsDown) {
+                lButtonIsDown = false;
+            }
+        }
+
+        else if (event1->type == SDL_MOUSEMOTION) {
+            if (lButtonIsDown) {
+                xMovement += event1->motion.xrel;
+                yMovement += event1->motion.yrel;
+                KeySpace();
+
+            }
+        }
+        
+        else if (event1->type == SDL_MOUSEWHEEL)
+        {
+            if (event1->wheel.y > 0) // scroll up
+            {
+                KeyEquals();
+            }
+            else if (event1->wheel.y < 0) // scroll down
+            {
+                KeyMinus();
+            }
+
+        }
+
+        else if (event1->type == SDL_KEYDOWN) {
 
             if (event1->key.keysym.scancode == SDL_SCANCODE_B)
                 KeyB();
@@ -265,6 +296,13 @@ void SortArray::CheckEvents() {
 
             else if (event1->key.keysym.scancode == SDL_SCANCODE_S)
                 KeyS();
+
+            else if (event1->key.keysym.scancode == SDL_SCANCODE_EQUALS)
+                KeyEquals();
+
+            else if (event1->key.keysym.scancode == SDL_SCANCODE_MINUS)
+                KeyMinus();
+
         }
 
         if (event1->type == SDL_QUIT)
@@ -288,6 +326,7 @@ void SortArray::CleanRes() {
 }
 
 void SortArray::KeySpace() {
+    
     ClearScreen();
     SDL_RenderPresent(renderer);
     PrintArray();
@@ -317,4 +356,14 @@ void SortArray::KeyI() {
 
 void SortArray::KeyS() {
     VizualizationSortingArray("select");
+}
+
+void SortArray::KeyEquals() {
+    scale += 0.01;
+    KeySpace();
+}
+
+void SortArray::KeyMinus() {
+    scale -= 0.01;
+    KeySpace();
 }

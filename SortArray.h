@@ -36,7 +36,10 @@ private:
     int sizeArray;
     int* arr = nullptr;
     int widthRow = 1;
-    
+    float scale = 1;
+    bool lButtonIsDown;
+    signed int xMovement = 0;
+    signed int yMovement = 0;
 
     SDL_DisplayMode DM;
     SDL_Renderer* renderer = nullptr;
@@ -79,4 +82,8 @@ private:
     void KeyI();
 
     void KeyS();
+
+    void KeyEquals();
+
+    void KeyMinus();
 };
