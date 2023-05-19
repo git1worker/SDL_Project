@@ -1,21 +1,17 @@
 
 #pragma once
 #include "inclSDL.h"
-#include <iostream>
-#include <chrono>
-#include <thread>
 
-using std::cout;
-using std::endl;
+
+
+
 
 
 class Framework
 {
 public:
 
-    bool Init();
-
-    void CheckEvents();
+    bool Init(const char* title);
 
     bool GetQuit();
 
@@ -25,28 +21,28 @@ public:
 
     void CleanRes();
 
+    void CheckEvents();
+
 private:
 
-    int32_t flags = SDL_WINDOW_SHOWN;
     int width = 1200;
     int height = 800;
     bool mouseButtonDown = false;
     int getX;
     int getY;
     int sizeCell = 10;
+    int counterCallsRandom = 0;
+    int32_t flags = SDL_WINDOW_SHOWN;
     int screenWidth;
     int screenHeight;
-    int counterCallsRandom = 0;
-
-    SDL_Event* event1 = new SDL_Event();
-
     bool quit = false;
 
+    SDL_DisplayMode DM;
     SDL_Renderer* renderer = nullptr;
     SDL_Window* window = nullptr;
+    SDL_Event* event1 = new SDL_Event();
     SDL_Rect* rect = new SDL_Rect{ 0, 0, sizeCell, sizeCell };
-    SDL_DisplayMode DM;
-
+    
     unsigned long int randInt;
     unsigned long int millisec_since_epoch;
 

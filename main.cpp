@@ -1,24 +1,31 @@
 ﻿
 #include "inclSDL.h"
-#include "Framework.h"
 
-Framework* MainApplicationSDL = nullptr;
+
+SortArray* MainApplicationSDL = nullptr;
 
 int main(int argc, char* args[])
-{
+{   
+    int fps = 60;
+    int desiredDelta = 1000 / fps;
 
-    MainApplicationSDL = new Framework();
+    MainApplicationSDL = new SortArray();
 
-    if (MainApplicationSDL->Init() != true)
+    if (MainApplicationSDL->Init("SDL Window") != true)
         return -1;
 
     while (!MainApplicationSDL->GetQuit())
     {
-
+        int startLoop = SDL_GetTicks();
         MainApplicationSDL->CheckEvents();
         MainApplicationSDL->Update();
         MainApplicationSDL->Render();
+        int delta = SDL_GetTicks() - startLoop;
+        if (delta < desiredDelta) {
+            SDL_Delay(desiredDelta - delta);
+        }
     }
+    
 
     MainApplicationSDL->CleanRes();
 

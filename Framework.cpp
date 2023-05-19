@@ -5,7 +5,7 @@
 /// -----------------------PUBLIC-----------------------
 /// </summary>
 
-bool Framework::Init() {
+bool Framework::Init(const char* title) {
 
     if (SDL_Init(SDL_INIT_VIDEO) == 0) {
         cout << "Initialization completed successfully" << endl;
@@ -18,14 +18,15 @@ bool Framework::Init() {
 
     SDL_GetCurrentDisplayMode(0, &DM);
     screenWidth = DM.w;
-    screenHeight = DM.h - 50;
+    screenHeight = DM.h - 60;
 
     window = SDL_CreateWindow(
-        "SDL Window",
+        title,
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
         screenWidth, screenHeight,
         flags
     );
+
     if (window == 0)
     {
         cout << "Window creation failed with error: " << SDL_GetError() << endl;
@@ -45,7 +46,6 @@ bool Framework::Init() {
 
     FillGrid();
 
-    cout << sizeof(*event1);
     return true;
 }
 
@@ -153,7 +153,6 @@ void Framework::MouseDownLeft()
 
     int quotionerX{ getX / sizeCell };
     int quotionerY{ getY / sizeCell };
-
 
 
     rect->y = quotionerY * sizeCell;
