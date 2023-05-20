@@ -1,15 +1,18 @@
 ﻿
 #include "inclSDL.h"
+#include "Framework.h"
 
 
-SortArray* MainApplicationSDL = nullptr;
 
 int main(int argc, char* args[])
 {   
     int fps = 60;
     int desiredDelta = 1000 / fps;
 
-    MainApplicationSDL = new SortArray();
+    Framework* MainApplicationSDL = nullptr;
+    MainApplicationSDL = new Framework();
+
+    
 
     if (MainApplicationSDL->Init("SDL Window") != true)
         return -1;
@@ -23,7 +26,7 @@ int main(int argc, char* args[])
         int delta = SDL_GetTicks() - startLoop;
 
         if (SDL_GetTicks() - lastMS > 1000) {
-            float fpsNow = (1000 / (delta + 1));
+            float fpsNow = 1000.0f / (delta + 1);
             cout << "FPS: " << fpsNow << endl;
             lastMS = SDL_GetTicks();
         }
@@ -33,10 +36,9 @@ int main(int argc, char* args[])
         }
 
     }
-    
 
     MainApplicationSDL->CleanRes();
-
+    std::cin.get();
     return 0;
 
 }

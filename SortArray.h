@@ -1,59 +1,35 @@
 #pragma once
 #include "inclSDL.h"
+#include "BasicWindow.h"
 
-using std::cout;
-using std::endl;
 
-class SortArray {
+
+class SortArray : public BasicWindow {
 
 public:
 
     bool Init(const char* title);
 
-    bool GetQuit();
-
     void Update();
 
     void Render();
-
-    void CleanRes();
 
     void CheckEvents();
 
 private:
 
-    int width = 1200;
-    int height = 800;
-    bool mouseButtonDown = false;
-    int getX;
-    int getY;
-    int sizeCell = 10;
-    int32_t flags = SDL_WINDOW_SHOWN;
-    int screenWidth;
-    int screenHeight;
-    bool quit = false;
-    int counterCallsRandom = 0;
-    int sizeArray;
     int* arr = nullptr;
-    int widthRow = 1;
     float scale = 1;
-    bool lButtonIsDown;
+    int sizeArray = 300;
+    int widthRow = (int)(3 * scale);
+    bool lButtonIsDown = false;
     signed int xMovement = 0;
     signed int yMovement = 0;
-
-    SDL_DisplayMode DM;
-    SDL_Renderer* renderer = nullptr;
-    SDL_Window* window = nullptr;
-    SDL_Event* event1 = new SDL_Event();
     
-    unsigned long int randInt;
-    unsigned long int millisec_since_epoch;
 
     void FillRect(int x, int y, int w, int h);
 
-    void SetRandom();
-
-    int  Partition(int a[], int start, int end);
+    int Partition(int a[], int start, int end);
 
     void Quicksort(int a[], int start, int end);
 
@@ -67,13 +43,14 @@ private:
 
     void VizualizationSortingArray(const char* method);
 
+    void Swap(int* xp, int* yp);
+
+
     void KeySpace();
 
     void KeyB();
 
     void KeyEscape();
-
-    void Swap(int* xp, int* yp);
 
     void KeyN();
 
@@ -86,4 +63,12 @@ private:
     void KeyEquals();
 
     void KeyMinus();
+
+    void MouseButtonDown();
+
+    void MouseButtonUp();
+
+    void MouseMotion();
+
+    void MouseWheel();
 };

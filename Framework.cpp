@@ -7,62 +7,30 @@
 
 bool Framework::Init(const char* title) {
 
-    if (SDL_Init(SDL_INIT_VIDEO) == 0) {
-        cout << "Initialization completed successfully" << endl;
-    }
-    else
-    {
-        cout << "Initialization failed with error: " << SDL_GetError() << endl;
+    if (!BasicWindow::Init(title))
         return false;
-    }
-
-    SDL_GetCurrentDisplayMode(0, &DM);
-    screenWidth = DM.w;
-    screenHeight = DM.h - 60;
-
-    window = SDL_CreateWindow(
-        title,
-        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-        screenWidth, screenHeight,
-        flags
-    );
-
-    if (window == 0)
-    {
-        cout << "Window creation failed with error: " << SDL_GetError() << endl;
-        return false;
-    }
-    else
-        cout << "Window creation completed succesfully" << endl;
-
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    if (renderer == 0)
-    {
-        cout << "Renderer creation faled with error: " << SDL_GetError() << endl;
-        return false;
-    }
-    else
-        cout << "Renderer creation completed succesfully" << endl;
 
     FillGrid();
 
     return true;
 }
 
-bool Framework::GetQuit() {
-    return quit;
-}
-
 void Framework::CheckEvents() {
     while (SDL_PollEvent(event1)) {
 
         if (event1->type == SDL_MOUSEBUTTONDOWN)
-        {   
+            MouseButtonDown();
 
-            if (event1->button.button == SDL_BUTTON_LEFT)
-                MouseDownLeft();
+        else if (event1->type == SDL_MOUSEBUTTONUP)
+            MouseButtonUp();
 
-        }
+        else if (event1->type == SDL_MOUSEMOTION)
+            MouseMotion();
+
+        else if (event1->type == SDL_MOUSEWHEEL)
+            MouseWheel();
+
+    
 
         if (event1->type == SDL_KEYDOWN) {
 
@@ -83,7 +51,6 @@ void Framework::CheckEvents() {
         if (event1->type == SDL_QUIT)
             quit = true;
     }
-
 }
 
 void Framework::Update() {
@@ -94,30 +61,9 @@ void Framework::Render() {
 
 }
 
-void Framework::CleanRes() {
-
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-
-}
-
 /// <summary>
 /// -----------------------PRIVATE-----------------------
 /// </summary>
-
-void Framework::SetRandom() {
-    millisec_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-    std::srand(millisec_since_epoch + counterCallsRandom);
-
-    randInt = millisec_since_epoch * std::rand();
-    randInt = randInt / (std::rand() + 1);
-    randInt = randInt * std::rand();
-
-
-    std::srand(randInt);
-    ++counterCallsRandom;
-}
 
 void Framework::KeySpace() {
     FillGrid();
@@ -147,32 +93,32 @@ void Framework::KeyR() {
     SDL_RenderPresent(renderer);
 }
 
-void Framework::MouseDownLeft()
-{
-    SDL_GetMouseState(&getX, &getY);
+void Framework::MouseButtonDown() {
+    if (event1->button.button == SDL_BUTTON_LEFT) {
 
-    int quotionerX{ getX / sizeCell };
-    int quotionerY{ getY / sizeCell };
+        SDL_GetMouseState(&getX, &getY);
+
+        int quotionerX{ getX / sizeCell };
+        int quotionerY{ getY / sizeCell };
 
 
-    rect->y = quotionerY * sizeCell;
-    rect->x = quotionerX * sizeCell;
-    
-    SetRandom();
+        rect->y = quotionerY * sizeCell;
+        rect->x = quotionerX * sizeCell;
 
-    SDL_SetRenderDrawColor(renderer, std::rand() % 256, std::rand() % 256, std::rand() % 256, 255);
+        SetRandom();
 
-    SDL_RenderFillRect(renderer, rect);
-    SDL_RenderPresent(renderer);
+        SDL_SetRenderDrawColor(renderer, std::rand() % 256, std::rand() % 256, std::rand() % 256, 255);
+
+        SDL_RenderFillRect(renderer, rect);
+        SDL_RenderPresent(renderer);
+    }
 }
 
 void Framework::KeyE() {
-    
-    for (int h = 0; h < screenHeight; h += sizeCell) {
-        cout << h << endl;
-        for (int w = 0; w < screenWidth; w += sizeCell) {
 
-            SetRandom();
+    SetRandom();
+    for (int h = 0; h < screenHeight; h += sizeCell) {
+        for (int w = 0; w < screenWidth; w += sizeCell) {
 
             SDL_SetRenderDrawColor(renderer, std::rand() % 256, std::rand() % 256, std::rand() % 256, 255);
 

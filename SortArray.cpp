@@ -1,55 +1,79 @@
 
 #include "SortArray.h"
 
+// PUBLIC
+
 bool SortArray::Init(const char* title) {
-
-    if (SDL_Init(SDL_INIT_VIDEO) == 0) {
-        cout << "Initialization completed successfully" << endl;
-    }
-    else
-    {
-        cout << "Initialization failed with error: " << SDL_GetError() << endl;
+  
+    if (!BasicWindow::Init(title))
         return false;
-    }
-
-    SDL_GetCurrentDisplayMode(0, &DM);
-    screenWidth = DM.w;
-    screenHeight = (DM.h - 60);
-
-    window = SDL_CreateWindow(
-        title,
-        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-        screenWidth, screenHeight,
-        flags
-    );
-
-    if (window == 0)
-    {
-        cout << "Window creation failed with error: " << SDL_GetError() << endl;
-        return false;
-    }
-    else
-        cout << "Window creation completed succesfully" << endl;
-
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    if (renderer == 0)
-    {
-        cout << "Renderer creation faled with error: " << SDL_GetError() << endl;
-        return false;
-    }
-    else
-        cout << "Renderer creation completed succesfully" << endl;
-    
-    
-
-
-    sizeArray = 600;
-    widthRow = 3 * scale;
 
     KeyN();
 
     return true;
 }
+
+void SortArray::Update() {
+
+}
+
+void SortArray::Render() {
+
+}
+
+void SortArray::CheckEvents() {
+    while (SDL_PollEvent(event1)) {
+
+        if (event1->type == SDL_MOUSEBUTTONDOWN)
+            MouseButtonDown();
+
+        else if (event1->type == SDL_MOUSEBUTTONUP)
+            MouseButtonUp();
+
+        else if (event1->type == SDL_MOUSEMOTION)
+            MouseMotion();
+
+        else if (event1->type == SDL_MOUSEWHEEL)
+            MouseWheel();
+
+        else if (event1->type == SDL_KEYDOWN) {
+
+            if (event1->key.keysym.scancode == SDL_SCANCODE_B)
+                KeyB();
+
+            else if (event1->key.keysym.scancode == SDL_SCANCODE_Q)
+                KeyQ();
+
+            else if (event1->key.keysym.scancode == SDL_SCANCODE_SPACE)
+                KeySpace();
+
+            else if (event1->key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+                KeyEscape();
+
+            else if (event1->key.keysym.scancode == SDL_SCANCODE_N)
+                KeyN();
+
+            else if (event1->key.keysym.scancode == SDL_SCANCODE_I)
+                KeyI();
+
+            else if (event1->key.keysym.scancode == SDL_SCANCODE_S)
+                KeyS();
+
+            else if (event1->key.keysym.scancode == SDL_SCANCODE_EQUALS)
+                KeyEquals();
+
+            else if (event1->key.keysym.scancode == SDL_SCANCODE_MINUS)
+                KeyMinus();
+
+        }
+
+        if (event1->type == SDL_QUIT)
+            quit = true;
+    }
+
+}
+
+// PRIVATE
 
 void SortArray::ClearScreen() {
     SDL_SetRenderDrawColor(renderer, 220, 220, 220, 255);
@@ -73,9 +97,9 @@ void SortArray::PrintArray() {
 
     int DistBetween = 1;
 
-    int voidDist = round((screenWidth - (widthRow * sizeArray + DistBetween * sizeArray)));
+    int voidDist = (int)(round((screenWidth - (widthRow * sizeArray + DistBetween * sizeArray))));
     if (voidDist == 0) DistBetween = 0;
-    int x = round(voidDist / 2);
+    int x = (int)(round(voidDist / 2));
 
     for (int i{ 0 }; i < sizeArray; ++i) {
         x += DistBetween;
@@ -91,9 +115,9 @@ void SortArray::PrintArray() {
 void SortArray::GeneratingArray() {
 
     arr = new int[sizeArray];
-    SetRandom();
+    BasicWindow::SetRandom();
     for (int i{ 0 }; i < this->sizeArray; ++i) {
-        this->arr[i] = (std::rand() % (screenHeight - 100 - 100) + 1) * scale;
+        this->arr[i] = (int)((std::rand() % (screenHeight - 100 - 100) + 1) * scale);
     }
     
 }
@@ -136,7 +160,6 @@ int SortArray::Partition(int* a, int start, int end)
     return pIndex;
 }
 
-// Процедура быстрой сортировки
 void SortArray::Quicksort(int* a, int start, int end)
 {
     // базовое условие
@@ -211,119 +234,13 @@ int SortArray::findSmallestPosition(int list[], int startPosition, int listLengt
     return smallestPosition;
 }
 
-void SortArray::SetRandom() {
-    millisec_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-    std::srand(millisec_since_epoch + counterCallsRandom);
-
-    randInt = millisec_since_epoch * std::rand();
-    randInt = randInt / (std::rand() + 1);
-    randInt = randInt * std::rand();
-
-    std::srand(randInt);
-    ++counterCallsRandom;
-}
-
 void SortArray::FillRect(int x, int y, int w, int h) {
     SDL_Rect line;
-    line.x = ceil(x * scale) + xMovement;
-    line.y = ceil(y * scale) + yMovement;
-    line.w = ceil(w * scale);
-    line.h = ceil(h * scale);
+    line.x = (int)(ceil(x * scale) + xMovement);
+    line.y = (int)(ceil(y * scale) + yMovement);
+    line.w = (int)(ceil(w * scale));
+    line.h = (int)(ceil(h * scale));
     SDL_RenderFillRect(renderer, &line);
-}
-
-bool SortArray::GetQuit() {
-    return quit;
-}
-
-void SortArray::CheckEvents() {
-    while (SDL_PollEvent(event1)) {
-
-        if (event1->type == SDL_MOUSEBUTTONDOWN)
-        {
-            if (event1->button.button == SDL_BUTTON_LEFT) {
-                lButtonIsDown = true;
-            }
-
-        }
-
-        else if (event1->type == SDL_MOUSEBUTTONUP) {
-            if (event1->button.button == SDL_BUTTON_LEFT && lButtonIsDown) {
-                lButtonIsDown = false;
-            }
-        }
-
-        else if (event1->type == SDL_MOUSEMOTION) {
-            if (lButtonIsDown) {
-                xMovement += event1->motion.xrel;
-                yMovement += event1->motion.yrel;
-                KeySpace();
-
-            }
-        }
-        
-        else if (event1->type == SDL_MOUSEWHEEL)
-        {
-            if (event1->wheel.y > 0) // scroll up
-            {
-                KeyEquals();
-            }
-            else if (event1->wheel.y < 0) // scroll down
-            {
-                KeyMinus();
-            }
-
-        }
-
-        else if (event1->type == SDL_KEYDOWN) {
-
-            if (event1->key.keysym.scancode == SDL_SCANCODE_B)
-                KeyB();
-
-            else if (event1->key.keysym.scancode == SDL_SCANCODE_Q)
-                KeyQ();
-
-            else if (event1->key.keysym.scancode == SDL_SCANCODE_SPACE)
-                KeySpace();
-
-            else if (event1->key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-                KeyEscape();
-
-            else if (event1->key.keysym.scancode == SDL_SCANCODE_N)
-                KeyN();
-
-            else if (event1->key.keysym.scancode == SDL_SCANCODE_I)
-                KeyI();
-
-            else if (event1->key.keysym.scancode == SDL_SCANCODE_S)
-                KeyS();
-
-            else if (event1->key.keysym.scancode == SDL_SCANCODE_EQUALS)
-                KeyEquals();
-
-            else if (event1->key.keysym.scancode == SDL_SCANCODE_MINUS)
-                KeyMinus();
-
-        }
-
-        if (event1->type == SDL_QUIT)
-            quit = true;
-    }
-
-}
-
-void SortArray::Update() {
-
-}
-
-void SortArray::Render() {
-
-}
-
-void SortArray::CleanRes() {
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
 }
 
 void SortArray::KeySpace() {
@@ -365,7 +282,7 @@ void SortArray::KeyEquals() {
     else if (scale > 2) ratio = 15;
     else if (scale > 1.3) ratio = 5;
     else if (scale > 1) ratio = 2;
-    scale += 0.01 * ratio;
+    scale += 0.01f * ratio;
     KeySpace();
 }
 
@@ -376,6 +293,42 @@ void SortArray::KeyMinus() {
     else if (scale > 1.3) ratio = 5;
     else if (scale > 1) ratio = 2;
         
-    scale -= 0.01 * ratio;
+    scale -= 0.01f * ratio;
     KeySpace();
+}
+
+void SortArray::MouseButtonDown()
+{
+    if (event1->button.button == SDL_BUTTON_LEFT) {
+        lButtonIsDown = true;
+    }
+}
+
+void SortArray::MouseButtonUp()
+{
+    if (event1->button.button == SDL_BUTTON_LEFT && lButtonIsDown) {
+        lButtonIsDown = false;
+    }
+}
+
+void SortArray::MouseMotion()
+{
+    if (lButtonIsDown) {
+        xMovement += event1->motion.xrel;
+        yMovement += event1->motion.yrel;
+        KeySpace();
+
+    }
+}
+
+void SortArray::MouseWheel()
+{   
+    if (event1->wheel.y > 0) // scroll up
+    {
+        KeyEquals();
+    }
+    else if (event1->wheel.y < 0) // scroll down
+    {
+        KeyMinus();
+    }
 }
